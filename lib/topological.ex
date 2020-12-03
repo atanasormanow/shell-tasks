@@ -10,18 +10,18 @@ defmodule Topological do
 
   def sort(tasks) do
     t_tasks = transform(tasks)
-    postOrder(t_tasks, Map.keys(t_tasks))
+    sort(t_tasks, Map.keys(t_tasks))
   end
 
   defp sort(tasks, []), do: []
   defp sort(tasks, t_names) do
     [t | t_names_rest] = t_names
     case Kernel.get_in(tasks, [t, "requires"]) do
-      nil ->  [t | postOrder(tasks, t_names_rest)]
+      nil ->  [t | sort(tasks, t_names_rest)]
       deps -> Enum.filter(
           deps,
           &(Enum.member?(t_names, &1)))
-          ++ [t | postOrder(tasks, t_names_rest -- deps)]
+          ++ [t | sort(tasks, t_names_rest -- deps)]
     end
   end
 
