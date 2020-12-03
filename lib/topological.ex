@@ -13,15 +13,15 @@ defmodule Topological do
     sort(t_tasks, Map.keys(t_tasks))
   end
 
-  defp sort(tasks, []), do: []
-  defp sort(tasks, t_names) do
-    [t | t_names_rest] = t_names
-    case Kernel.get_in(tasks, [t, "requires"]) do
-      nil ->  [t | sort(tasks, t_names_rest)]
+  defp sort(_tasks, []), do: []
+  defp sort(tasks, names) do
+    [name | names_rest] = names
+    case Kernel.get_in(tasks, [name, "requires"]) do
+      nil ->  [name | sort(tasks, names_rest)]
       deps -> Enum.filter(
           deps,
-          &(Enum.member?(t_names, &1)))
-          ++ [t | sort(tasks, t_names_rest -- deps)]
+          &(Enum.member?(names, &1)))
+          ++ [name | sort(tasks, names_rest -- deps)]
     end
   end
 
