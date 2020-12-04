@@ -6,11 +6,11 @@ defmodule ShellTasksServer.Router do
 
   get "/" do
     {:ok, response, _} = read_body(conn)
-    IO.inspect(
-      Poison.decode!(response)["body"]["tasks"]
+    tasks_sorted
+    = Poison.decode!(response)["body"]["tasks"]
       |> Topological.sort
-    )
-    send_resp(conn, 200, "Hello!")
+      |> Poison.encode!
+    send_resp(conn, 200, tasks_sorted)
   end
 
   get "/shell-script" do

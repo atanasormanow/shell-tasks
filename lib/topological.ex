@@ -11,6 +11,15 @@ defmodule Topological do
   def sort(tasks) do
     t_tasks = transform(tasks)
     sort(t_tasks, Map.keys(t_tasks), [])
+    |> Enum.reverse
+    |> Enum.map(
+      fn task_name ->
+        %{
+          name: task_name,
+          command: t_tasks[task_name]["command"]
+        }
+      end
+    )
   end
 
   # the order is reversed!
