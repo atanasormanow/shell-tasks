@@ -8,18 +8,39 @@ defmodule Topological do
   # - cyclic dependencies
   # - invalid dependencies (TODO: validate)
 
-  def sort(tasks) do
+  def sort(tasks, opt \\ :list) do
     t_tasks = transform(tasks)
+
     sort(t_tasks, Map.keys(t_tasks), [])
     |> Enum.reverse
+    |> (fn task_names ->
+      case opt do
+        :list -> task_list(t_tasks, task_names)
+        :command -> task_commands(t_tasks, task_names)
+        _ -> {:error, "invalid option" }
+      end
+    end).()
+  end
+
+  defp task_list(tasks, task_names) do
+    task_names
     |> Enum.map(
       fn task_name ->
         %{
           name: task_name,
-          command: t_tasks[task_name]["command"]
+          command: tasks[task_name]["command"]
         }
       end
     )
+  end
+
+  defp task_commands(tasks, task_names) do
+    shebang = "#!/usr/bin/env bash"
+
+    task_names
+    |> Enum.map( fn task_name -> tasks[task_name]["command"] end)
+    |> Enum.join("\n")
+    |> (fn commands -> shebang <> "\n" <> commands end).()
   end
 
   # the order is reversed!
