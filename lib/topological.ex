@@ -58,21 +58,4 @@ defmodule Topological do
     )
   end
 
-  #########
-  # INPUT #
-  #########
-
-  #%{
-  #  "task-1" => %{"command" => "touch /tmp/file1"},
-  #  "task-2" => %{"command" => "cat /tmp/file1", "requires" => ["task-3"]},
-  #  "task-3" => %{
-  #    "command" => "echo 'Hello World!' > /tmp/file1",
-  #    "requires" => ["task-1"]
-  #  },
-  #  "task-4" => %{
-  #    "command" => "rm /tmp/file1",
-  #    "requires" => ["task-2", "task-3"]
-  #  }
-  #}
-
 end
