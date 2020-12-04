@@ -10,18 +10,41 @@ defmodule Topological do
 
   def sort(tasks) do
     t_tasks = transform(tasks)
-    sort(t_tasks, Map.keys(t_tasks))
+    sort(t_tasks, Map.keys(t_tasks), [])
   end
 
-  defp sort(_tasks, []), do: []
-  defp sort(tasks, names) do
-    [name | names_rest] = names
+  # the order is reversed!
+  defp sort(_tasks, [], result), do: result
+  defp sort(tasks, [name | names], result) do
     case Kernel.get_in(tasks, [name, "requires"]) do
-      nil ->  [name | sort(tasks, names_rest)]
-      deps -> Enum.filter(
+
+      nil -> sort(tasks, names, [name | result])
+
+      deps ->
+        case Enum.filter(
           deps,
-          &(Enum.member?(names, &1)))
-          ++ [name | sort(tasks, names_rest -- deps)]
+          fn dep -> !Enum.member?(result, dep) end
+        ) do
+
+          [] -> sort(tasks, names, [name | result])
+
+          filtered_deps ->
+            filtered_deps
+            |> List.foldl(
+              result,
+              fn dep, acc ->
+                if Enum.member?(acc, dep) do
+                  acc
+                else
+                  sort(tasks, [dep], acc)
+                end
+              end
+            )
+            |>
+            (fn
+              result -> sort(tasks, names -- result, [name | result])
+            end).()
+        end
     end
   end
 
