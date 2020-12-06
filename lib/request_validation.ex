@@ -3,7 +3,9 @@ defmodule Request.Verification do
   A module for verifying the request body
   """
 
-
+  @doc """
+  Verify the body has the needed fields
+  """
   def verify_request_structure(body, fields) do
     verified =
       is_map(body)
@@ -18,6 +20,9 @@ defmodule Request.Verification do
     end
   end
 
+  @doc """
+  Verify that all dependencies are available as tasks
+  """
   def verify_task_dependencies(body) do
     tasks = body["tasks"]
     names = Enum.map(tasks, fn t -> t["name"] end)

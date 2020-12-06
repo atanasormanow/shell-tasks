@@ -1,4 +1,8 @@
 defmodule ShellTasksServer.Router do
+  @moduledoc """
+  A module for handling requests
+  """
+
   alias Request.Verification
 
   use Plug.Router
@@ -6,6 +10,9 @@ defmodule ShellTasksServer.Router do
   plug :match
   plug :dispatch
 
+  @doc """
+  Get a sorted list of the given tasks
+  """
   get "/" do
     {:ok, response, _} = read_body(conn)
     response_body = Poison.decode!(response)["body"]
@@ -23,6 +30,10 @@ defmodule ShellTasksServer.Router do
     end
   end
 
+  @doc """
+  Get a sorted list of the given tasks as a string,
+  representing shell script
+  """
   get "/shell-script" do
     {:ok, response, _} = read_body(conn)
     response_body = Poison.decode!(response)["body"]

@@ -98,5 +98,4 @@ defmodule Topological do
       } end
     )
   end
-
 end
