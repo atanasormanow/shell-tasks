@@ -10,12 +10,10 @@ defmodule ShellTasksServer.Router do
   plug :match
   plug :dispatch
 
-  @doc """
-  Get a sorted list of the given tasks
-  """
-  get "/" do
+  post "/" do
     {:ok, response, _} = read_body(conn)
-    response_body = Poison.decode!(response)["body"]
+    IO.inspect(response)
+    response_body = Poison.decode!(response)
 
     case validate_and_sort(response_body, :list) do
 
@@ -30,13 +28,9 @@ defmodule ShellTasksServer.Router do
     end
   end
 
-  @doc """
-  Get a sorted list of the given tasks as a string,
-  representing shell script
-  """
-  get "/shell-script" do
+  post "/shell-script" do
     {:ok, response, _} = read_body(conn)
-    response_body = Poison.decode!(response)["body"]
+    response_body = Poison.decode!(response)
 
     case validate_and_sort(response_body, :commands) do
 
