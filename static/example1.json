@@ -1,0 +1,40 @@
+{
+  "tasks":[
+    {
+      "name":"a",
+      "command":"cat /tmp/file4",
+      "requires":[
+        "b",
+        "c",
+        "d",
+        "e"
+      ]
+    },
+    {
+      "name":"b",
+      "command":"cat /tmp/file3.2",
+      "requires":[
+        "d"
+      ]
+    },
+    {
+      "name":"c",
+      "command":"cat /tmp/file3.1",
+      "requires":[
+        "d",
+        "e"
+      ]
+    },
+    {
+      "name":"d",
+      "command":"cat /tmp/file2",
+      "requires":[
+        "e"
+      ]
+    },
+    {
+      "name":"e",
+      "command":"cat /tmp/file1"
+    }
+  ]
+}
