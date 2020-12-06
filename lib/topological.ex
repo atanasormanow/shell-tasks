@@ -6,9 +6,15 @@ defmodule Topological do
   # TODO: typespecs
   # TODO: should work with:
   # - cyclic dependencies
-  # - invalid dependencies (TODO: validate)
 
-  def sort(tasks, opt \\ :list) do
+  @doc """
+  The sort function sorts tasks topologically.
+  Depending on the opt value, the tasks would have the following format:
+    :list - a list of tasks containing a "name" and a "command" field
+    :commands - a string of the commands representing a bash script
+              (shebang included)
+  """
+  def sort(tasks, opt) do
     t_tasks = transform(tasks)
 
     sort(t_tasks, Map.keys(t_tasks), [])
@@ -16,7 +22,7 @@ defmodule Topological do
     |> (fn task_names ->
       case opt do
         :list -> task_list(t_tasks, task_names)
-        :command -> task_commands(t_tasks, task_names)
+        :commands -> task_commands(t_tasks, task_names)
         _ -> {:error, "invalid option" }
       end
     end).()
@@ -43,23 +49,26 @@ defmodule Topological do
     |> (fn commands -> shebang <> "\n" <> commands end).()
   end
 
-  # the order is reversed!
+  # Returns the names of the sorted tasks, but in reversed order
   defp sort(_tasks, [], result), do: result
   defp sort(tasks, [name | names], result) do
     case Kernel.get_in(tasks, [name, "requires"]) do
-
+      # no dependencies -> add to result and continue
       nil -> sort(tasks, names, [name | result])
 
+      # get deps that are not in result
       deps ->
         case Enum.filter(
           deps,
           fn dep -> !Enum.member?(result, dep) end
         ) do
 
+          # no dependencies -> add to result and continue
           [] -> sort(tasks, names, [name | result])
 
           filtered_deps ->
             filtered_deps
+            # process deps separately, keep result in acc
             |> List.foldl(
               result,
               fn dep, acc ->
@@ -71,6 +80,8 @@ defmodule Topological do
               end
             )
             |>
+            # add current name dep to result
+            # remove current call's result from the names
             (fn
               result -> sort(tasks, names -- result, [name | result])
             end).()
