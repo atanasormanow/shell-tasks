@@ -3,10 +3,6 @@ defmodule Topological do
   A module for sorting tasks
   """
 
-  # TODO: typespecs
-  # TODO: should work with:
-  # - cyclic dependencies
-
   @doc """
   The sort function sorts tasks topologically.
   Depending on the opt value, the tasks would have the following format:
@@ -48,6 +44,17 @@ defmodule Topological do
     |> Enum.join("\n")
     |> (fn commands -> shebang <> "\n" <> commands end).()
   end
+
+
+  # TODO sort should detect cyclic dependencies
+
+  # NOTE the tasks have to form a DAG, in case there is a cycle
+  # sort wont be able to detect it, and will act as if the loop point
+  # was just an already processed dependency
+
+  # NOTE both detecting a cycle and doing a topological sort use DFS.
+  # Therefore with enough memmory it is possible to do both
+  # with a single traversal.
 
   # Returns the names of the sorted tasks, but in reversed order
   defp sort(_tasks, [], result), do: result
