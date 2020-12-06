@@ -1,4 +1,8 @@
-defmodule Request.Validation do
+defmodule Request.Verification do
+  @moduledoc """
+  A module for verifying the request body
+  """
+
 
   def verify_request_structure(body, fields) do
     verified =
