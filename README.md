@@ -1,21 +1,22 @@
 # ShellTasksServer
 
-**TODO: Add description**
+A simple HTTP service, that takes a collection of tasks and sorts them acording
+to their dependencies.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `shell_tasks_server` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:shell_tasks_server, "~> 0.1.0"}
-  ]
-end
+- Run with `mix run --no-halt`
+- Listens on port `4000`
+---
+- You can find an example input at `static/example.json`
+- Example call: `curl -d @example.json http://localhost:4000/shell-script`
+- Example output:
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/shell_tasks_server](https://hexdocs.pm/shell_tasks_server).
-
+#!/usr/bin/env bash
+touch /tmp/file1
+echo 'Hello World!' > /tmp/file1
+cat /tmp/file1
+rm /tmp/file1
+```
+---
+- Request on `/` for a list of the sorted tasks as json objects.
+- Request on `/shell-script` for a shell script representation of the tasks
+with their respective commands
