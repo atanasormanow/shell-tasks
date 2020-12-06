@@ -13,15 +13,16 @@ defmodule Topological do
   def sort(tasks, opt) do
     t_tasks = transform(tasks)
 
-    sort(t_tasks, Map.keys(t_tasks), [])
+    sorted_names
+    = t_tasks
+    |> sort(Map.keys(t_tasks), [])
     |> Enum.reverse
-    |> (fn task_names ->
-      case opt do
-        :list -> task_list(t_tasks, task_names)
-        :commands -> task_commands(t_tasks, task_names)
-        _ -> {:error, "invalid option" }
-      end
-    end).()
+
+    case opt do
+      :list -> task_list(t_tasks, sorted_names)
+      :commands -> task_commands(t_tasks, sorted_names)
+      _ -> {:error, "invalid option" }
+    end
   end
 
   defp task_list(tasks, task_names) do
@@ -39,10 +40,12 @@ defmodule Topological do
   defp task_commands(tasks, task_names) do
     shebang = "#!/usr/bin/env bash"
 
-    task_names
+    task_commands
+    = task_names
     |> Enum.map( fn task_name -> tasks[task_name]["command"] end)
     |> Enum.join("\n")
-    |> (fn commands -> shebang <> "\n" <> commands end).()
+
+    shebang <> "\n\n" <> task_commands
   end
 
 
@@ -74,7 +77,8 @@ defmodule Topological do
           [] -> sort(tasks, names, [name | result])
 
           filtered_deps ->
-            filtered_deps
+            processed_deps
+            = filtered_deps
             # process deps separately, keep result in acc
             |> List.foldl(
               result,
@@ -86,12 +90,9 @@ defmodule Topological do
                 end
               end
             )
-            |>
             # add current name dep to result
             # remove current call's result from the names
-            (fn
-              result -> sort(tasks, names -- result, [name | result])
-            end).()
+            sort(tasks, names -- processed_deps, [name | processed_deps])
         end
     end
   end
