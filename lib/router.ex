@@ -12,7 +12,6 @@ defmodule ShellTasksServer.Router do
 
   post "/" do
     {:ok, response, _} = read_body(conn)
-    IO.inspect(response)
     response_body = Poison.decode!(response)
 
     case validate_and_sort(response_body, :list) do
