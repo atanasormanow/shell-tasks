@@ -8,10 +8,8 @@ defmodule Request.Verification do
   """
   def verify_request_structure(body, fields) do
     verified =
-      is_map(body)
-      && Map.has_key?(body, "tasks")
-      && is_list(body["tasks"])
-      && contains_fields?(body["tasks"], fields)
+      is_map(body) && Map.has_key?(body, "tasks") && is_list(body["tasks"]) &&
+        contains_fields?(body["tasks"], fields)
 
     if verified do
       :ok
@@ -27,8 +25,8 @@ defmodule Request.Verification do
     tasks = body["tasks"]
     names = Enum.map(tasks, fn t -> t["name"] end)
 
-    verified
-    = tasks
+    verified =
+      tasks
       |> Enum.flat_map(fn t -> Map.get(t, "requres", []) end)
       |> Enum.all?(&(&1 in names))
 
@@ -43,10 +41,11 @@ defmodule Request.Verification do
     Enum.all?(
       tasks,
       fn
-        t -> Enum.all?(
+        t ->
+          Enum.all?(
             fields,
             fn f -> Map.has_key?(t, f) end
-        )
+          )
       end
     )
   end

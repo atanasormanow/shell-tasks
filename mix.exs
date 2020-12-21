@@ -23,7 +23,7 @@ defmodule ShellTasksServer.MixProject do
   defp deps do
     [
       {:poison, "~> 4.0"},
-      {:plug_cowboy, "~> 2.4"},
+      {:plug_cowboy, "~> 2.4"}
     ]
   end
 end

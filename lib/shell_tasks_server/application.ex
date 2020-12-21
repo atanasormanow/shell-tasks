@@ -1,5 +1,4 @@
 defmodule ShellTasksServer.Application do
-
   use Application
   require Logger
 
@@ -9,9 +8,7 @@ defmodule ShellTasksServer.Application do
     children = [
       {
         Plug.Cowboy,
-        scheme: :http,
-        plug: ShellTasksServer.Router,
-        port: @port
+        scheme: :http, plug: ShellTasksServer.Router, port: @port
       }
     ]
 

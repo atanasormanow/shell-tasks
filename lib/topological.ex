@@ -13,41 +13,38 @@ defmodule Topological do
   def sort(tasks, opt) do
     t_tasks = transform(tasks)
 
-    sorted_names
-    = t_tasks
-    |> sort(Map.keys(t_tasks), [])
-    |> Enum.reverse
+    sorted_names =
+      t_tasks
+      |> sort(Map.keys(t_tasks), [])
+      |> Enum.reverse()
 
     case opt do
       :list -> task_list(t_tasks, sorted_names)
       :commands -> task_commands(t_tasks, sorted_names)
-      _ -> {:error, "invalid option" }
+      _ -> {:error, "invalid option"}
     end
   end
 
   defp task_list(tasks, task_names) do
     task_names
-    |> Enum.map(
-      fn task_name ->
-        %{
-          name: task_name,
-          command: tasks[task_name]["command"]
-        }
-      end
-    )
+    |> Enum.map(fn task_name ->
+      %{
+        name: task_name,
+        command: tasks[task_name]["command"]
+      }
+    end)
   end
 
   defp task_commands(tasks, task_names) do
     shebang = "#!/usr/bin/env bash"
 
-    task_commands
-    = task_names
-    |> Enum.map( fn task_name -> tasks[task_name]["command"] end)
-    |> Enum.join("\n")
+    task_commands =
+      task_names
+      |> Enum.map(fn task_name -> tasks[task_name]["command"] end)
+      |> Enum.join("\n")
 
     shebang <> "\n\n" <> task_commands
   end
-
 
   # TODO sort should detect cyclic dependencies
 
@@ -61,35 +58,38 @@ defmodule Topological do
 
   # Returns the names of the sorted tasks, but in reversed order
   defp sort(_tasks, [], result), do: result
+
   defp sort(tasks, [name | names], result) do
     case Kernel.get_in(tasks, [name, "requires"]) do
       # no dependencies -> add to result and continue
-      nil -> sort(tasks, names, [name | result])
+      nil ->
+        sort(tasks, names, [name | result])
 
       # get deps that are not in result
       deps ->
         case Enum.filter(
-          deps,
-          fn dep -> !Enum.member?(result, dep) end
-        ) do
-
+               deps,
+               fn dep -> !Enum.member?(result, dep) end
+             ) do
           # no dependencies -> add to result and continue
-          [] -> sort(tasks, names, [name | result])
+          [] ->
+            sort(tasks, names, [name | result])
 
           filtered_deps ->
-            processed_deps
-            = filtered_deps
-            # process deps separately, keep result in acc
-            |> List.foldl(
-              result,
-              fn dep, acc ->
-                if Enum.member?(acc, dep) do
-                  acc
-                else
-                  sort(tasks, [dep], acc)
+            processed_deps =
+              filtered_deps
+              # process deps separately, keep result in acc
+              |> List.foldl(
+                result,
+                fn dep, acc ->
+                  if Enum.member?(acc, dep) do
+                    acc
+                  else
+                    sort(tasks, [dep], acc)
+                  end
                 end
-              end
-            )
+              )
+
             # add current name dep to result
             # remove current call's result from the names
             sort(tasks, names -- processed_deps, [name | processed_deps])
@@ -100,10 +100,12 @@ defmodule Topological do
   defp transform(tasks_from_response) do
     Map.new(
       tasks_from_response,
-      fn task -> {
-        task["name"],
-        Map.drop(task, ["name"])
-      } end
+      fn task ->
+        {
+          task["name"],
+          Map.drop(task, ["name"])
+        }
+      end
     )
   end
 end
