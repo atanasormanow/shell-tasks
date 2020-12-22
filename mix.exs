@@ -24,7 +24,7 @@ defmodule ShellTasksServer.MixProject do
     [
       {:poison, "~> 4.0"},
       {:plug_cowboy, "~> 2.4"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
     ]
   end
 end
