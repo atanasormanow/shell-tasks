@@ -98,8 +98,6 @@ defmodule Topological do
   end
 
   defp transform(tasks_from_response) do
-    IO.inspect(tasks_from_response)
-
     Map.new(
       tasks_from_response,
       fn task ->
