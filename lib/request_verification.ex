@@ -28,7 +28,7 @@ defmodule Request.Verification do
     verified =
       tasks
       |> Enum.flat_map(fn t -> Map.get(t, "requres", []) end)
-      |> Enum.all?(&(&1 in names))
+      |> Enum.all?(fn dep -> Enum.member?(names, dep) end)
 
     if verified do
       :ok

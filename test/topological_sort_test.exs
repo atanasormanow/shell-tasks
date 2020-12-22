@@ -223,7 +223,6 @@ defmodule TopologicalSortTest do
       assert sort(context.example1_inversed, :list) == output
     end
 
-
     test "inversed example 1 as shell script string", context do
       output =
         Enum.join(
