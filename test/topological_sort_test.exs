@@ -85,14 +85,14 @@ defmodule TopologicalSortTest do
         },
         %{
           "name" => "c",
-          "command" => "cat /tmp/file3.1",
+          "command" => "cat /tmp/file3",
           "requires" => [
             "a"
           ]
         },
         %{
           "name" => "d",
-          "command" => "cat /tmp/file3.2",
+          "command" => "cat /tmp/file3",
           "requires" => [
             "a",
             "b",
@@ -196,6 +196,49 @@ defmodule TopologicalSortTest do
       assert sort(context.example1, :commands) == output
     end
 
-    # TODO Add tests for example1_inversed
+    test "inversed example 1 as list", context do
+      output = [
+        %{
+          name: "a",
+          command: "cat /tmp/file1"
+        },
+        %{
+          name: "b",
+          command: "cat /tmp/file2"
+        },
+        %{
+          name: "c",
+          command: "cat /tmp/file3"
+        },
+        %{
+          name: "d",
+          command: "cat /tmp/file3"
+        },
+        %{
+          name: "e",
+          command: "cat /tmp/file4"
+        }
+      ]
+
+      assert sort(context.example1_inversed, :list) == output
+    end
+
+
+    test "inversed example 1 as shell script string", context do
+      output =
+        Enum.join(
+          [
+            "#!/usr/bin/env bash\n",
+            "cat /tmp/file1",
+            "cat /tmp/file2",
+            "cat /tmp/file3",
+            "cat /tmp/file3",
+            "cat /tmp/file4"
+          ],
+          "\n"
+        )
+
+      assert sort(context.example1_inversed, :commands) == output
+    end
   end
 end
