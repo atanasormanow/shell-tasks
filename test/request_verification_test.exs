@@ -1,7 +1,7 @@
 defmodule RequestVerificationTest do
   use ExUnit.Case
 
-  import Request.Verification
+  import RequestVerification
 
   describe "Testing whether the request has a proper structure" do
     test "with valid structure" do

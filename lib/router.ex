@@ -3,7 +3,7 @@ defmodule ShellTasksServer.Router do
   A module for handling requests
   """
 
-  alias Request.Verification
+  import RequestVerification
 
   use Plug.Router
 
@@ -49,8 +49,8 @@ defmodule ShellTasksServer.Router do
   end
 
   defp validate_and_sort(body, opt) do
-    with :ok <- Verification.verify_request_structure(body, ["name", "command"]),
-         :ok <- Verification.verify_task_dependencies(body),
+    with :ok <- verify_request_structure(body, ["name", "command"]),
+         :ok <- verify_task_dependencies(body),
          do: Topological.sort(body["tasks"], opt)
   end
 end

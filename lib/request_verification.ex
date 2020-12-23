@@ -1,4 +1,4 @@
-defmodule Request.Verification do
+defmodule RequestVerification do
   @moduledoc """
   A module for verifying the request body
   """
